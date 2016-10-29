@@ -1,5 +1,6 @@
 package com.wiklosoft.ocf.livingroom;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,10 +18,15 @@ import android.widget.ToggleButton;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.wiklosoft.ocf.OcfControlPoint;
 import com.wiklosoft.ocf.OcfDevice;
+import com.wiklosoft.ocf.OcfDeviceVariableCallback;
 
 
 public class LivingRoomFragment extends Fragment{
     private static final String LIVINGROOM_ID = "00000000-0000-0000-0001-000000000001";
+    private static final String RESOURCE_FRONT = "/lampa/front";
+    private static final String RESOURCE_BACK = "/lampa/back";
+    private static final String RESOURCE_TABLE = "/lampa/table";
+    private static final String RESOURCE_AMBIENT = "/lampa/ambient";
 
     TextView mConnectionStatus = null;
     TextView mServerConnectionStatus = null;
@@ -46,8 +52,17 @@ public class LivingRoomFragment extends Fragment{
             
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (mDevice != null){
+                    String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
-
+                    mDevice.post(RESOURCE_FRONT, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+                    mMasterButton.setChecked(true);
+                }
             }
         });
         mBackSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -61,6 +76,17 @@ public class LivingRoomFragment extends Fragment{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (mDevice != null){
+                    String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
+
+                    mDevice.post(RESOURCE_BACK, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+                    mMasterButton.setChecked(true);
+                }
             }
         });
         mTableSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -74,13 +100,37 @@ public class LivingRoomFragment extends Fragment{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-               // mDevice.setValue("table", seekBar.getProgress());
+                if (mDevice != null){
+                    String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
+
+                    mDevice.post(RESOURCE_TABLE, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+                    mMasterButton.setChecked(true);
+                }
             }
         });
 
         mAmbient.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (mDevice != null) {
+                    int red = Color.red(mPicker.getColor()) * progress / 100;
+                    int green = Color.green(mPicker.getColor()) * progress / 100;
+                    int blue = Color.blue(mPicker.getColor()) * progress / 100;
+
+                    String v = "{\"dimmingSetting\": \"" + red + "," + green + "," + blue + "\"}";
+
+                    mDevice.post(RESOURCE_AMBIENT, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+                }
             }
 
             @Override
@@ -97,6 +147,21 @@ public class LivingRoomFragment extends Fragment{
         mPicker.setOnColorChangedListener(new ColorPicker.OnColorChangedListener() {
             @Override
             public void onColorChanged(int i) {
+                if (mDevice != null) {
+                    int progress = mAmbient.getProgress();
+                    int red = Color.red(mPicker.getColor()) * progress / 100;
+                    int green = Color.green(mPicker.getColor()) * progress / 100;
+                    int blue = Color.blue(mPicker.getColor()) * progress / 100;
+
+                    String v = "{\"dimmingSetting\": \"" + red + "," + green + "," + blue + "\"}";
+
+                    mDevice.post(RESOURCE_AMBIENT, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+                }
             }
         });
     }
@@ -107,6 +172,13 @@ public class LivingRoomFragment extends Fragment{
             if (dev.getDi().equals(LIVINGROOM_ID) && mDevice == null){
                 Log.d("", "device Found");
                 mDevice = dev;
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mConnectionStatus.setText("Connected");
+                    }
+                });
             }
         }
     };
@@ -116,16 +188,19 @@ public class LivingRoomFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.living_room_fragment, container, false);
 
         mController = ((OcfApplicationContext)getActivity().getApplicationContext()).getOcfControlPoint();
-
         mController.addOnDeviceFoundCallback(onFound);
+        mController.searchDevices();
         
-        mServerConnectionStatus = (TextView) rootView.findViewById(R.id.section_label);
         mConnectionStatus = (TextView) rootView.findViewById(R.id.device_connected);
         mMasterButton = (ToggleButton) rootView.findViewById(R.id.master_button);
 
         mFrontSeekBar = (SeekBar) rootView.findViewById(R.id.output_front);
         mBackSeekBar =(SeekBar) rootView.findViewById(R.id.output_back);
         mTableSeekBar = (SeekBar) rootView.findViewById(R.id.output_table);
+
+        mFrontSeekBar.setMax(255);
+        mBackSeekBar.setMax(255);
+        mTableSeekBar.setMax(255);
 
         mAmbient = (SeekBar) rootView.findViewById(R.id.output_color);
 
