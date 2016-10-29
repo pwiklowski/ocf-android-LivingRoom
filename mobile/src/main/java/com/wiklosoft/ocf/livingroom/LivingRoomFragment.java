@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class LivingRoomFragment extends Fragment{
     SeekBar mBackSeekBar = null;
     SeekBar mTableSeekBar = null;
     SeekBar mAmbient = null;
+
+    ImageButton mSearchForDevices = null;
 
     ColorPicker mPicker = null;
 
@@ -201,6 +204,17 @@ public class LivingRoomFragment extends Fragment{
         mFrontSeekBar.setMax(255);
         mBackSeekBar.setMax(255);
         mTableSeekBar.setMax(255);
+
+        mSearchForDevices = (ImageButton) rootView.findViewById(R.id.searchForDevices);
+        mSearchForDevices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               if (mController != null) {
+                   mController.searchDevices();
+               }
+            }
+        });
+
 
         mAmbient = (SeekBar) rootView.findViewById(R.id.output_color);
 
