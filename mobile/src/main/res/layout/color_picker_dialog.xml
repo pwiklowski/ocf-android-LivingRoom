@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="1"
+    android:orientation="vertical" >
+
+    <GridLayout
+        android:id="@+id/colorsGridView"
+        android:layout_width="fill_parent"
+        android:layout_height="230dp"
+        android:layout_above="@+id/ambient_red"
+        android:layout_alignParentTop="true"
+        android:padding="20dp" >
+
+    </GridLayout>
+
+    <SeekBar
+        android:id="@+id/ambient_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
+
+    <SeekBar
+        android:id="@+id/ambient_green"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ambient_blue"
+        android:layout_alignParentLeft="true" />
+
+    <SeekBar
+        android:id="@+id/ambient_red"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ambient_green"
+        android:layout_alignParentLeft="true"
+        android:scrollbarStyle="outsideOverlay"
+        android:thumb="@drawable/thumb" />
+
+</RelativeLayout>

@@ -1,0 +1,176 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+              tools:context=".LivingRoomFragment"
+              android:id="@+id/layout"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/section_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Server connection" />
+
+        <TextView
+            android:id="@+id/device_connected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="DEvice connection"
+            android:textAlignment="gravity" />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/knob"
+        android:layout_width="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+        android:layout_weight="15"
+        android:layout_height="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            >
+
+            <com.larswerkman.holocolorpicker.ColorPicker
+                android:id="@+id/picker"
+                android:layout_width="fill_parent"
+                app:color_pointer_radius="24dp"
+                app:color_pointer_halo_radius="48dp"
+                app:color_center_radius="10dp"
+                app:color_center_halo_radius="20dp"
+                android:layout_height="fill_parent"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ToggleButton
+                android:id="@+id/master_button"
+                android:textColor="#FFF"
+                android:textSize="100sp"
+
+                android:background="@drawable/power"
+                android:checked="false"
+                android:layout_centerInParent="true"
+                android:textOff=" "
+                android:textOn=" "
+                android:layout_width="250dp"
+                android:layout_height="250dp"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="15">
+
+        <TextView
+            android:id="@+id/color_label"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="Ambient"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="20dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorAccent"
+            android:fontFamily="sans-serif-condensed"
+            android:typeface="serif"
+            android:textSize="18sp"/>
+
+        <SeekBar
+            android:id="@+id/output_color"
+            android:layout_width="match_parent"
+            android:thumb="@drawable/thumb"
+            android:layout_height="0dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_weight="2"/>
+
+        <TextView
+            android:id="@+id/output_front_label"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="Front"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="20dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorAccent"
+            android:fontFamily="sans-serif-condensed"
+            android:typeface="serif"
+            android:textSize="18sp"/>
+
+        <SeekBar
+            android:id="@+id/output_front"
+            android:layout_width="match_parent"
+            android:thumb="@drawable/thumb"
+            android:layout_height="0dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_weight="2"/>
+
+        <TextView
+            android:id="@+id/output_back_label"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="Back"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="20dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorAccent"
+            android:fontFamily="sans-serif-condensed"
+            android:typeface="serif"
+            android:textSize="18sp"/>
+
+        <SeekBar
+            android:id="@+id/output_back"
+            android:thumb="@drawable/thumb"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:layout_weight="2"/>
+
+        <TextView
+            android:id="@+id/output_table_label"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="Table"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="20dp"
+            android:layout_weight="1"
+            android:textColor="@color/colorAccent"
+            android:fontFamily="sans-serif-condensed"
+            android:typeface="serif"
+            android:textSize="18sp"/>
+
+        <SeekBar
+            android:id="@+id/output_table"
+            android:thumb="@drawable/thumb"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_weight="2"/>
+    </LinearLayout>
+
+
+</LinearLayout>
