@@ -19,7 +19,13 @@ import android.widget.ToggleButton;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.wiklosoft.ocf.OcfControlPoint;
 import com.wiklosoft.ocf.OcfDevice;
+import com.wiklosoft.ocf.OcfDeviceVariable;
 import com.wiklosoft.ocf.OcfDeviceVariableCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 
 public class LivingRoomFragment extends Fragment{
@@ -168,6 +174,56 @@ public class LivingRoomFragment extends Fragment{
             }
         });
     }
+    OcfDeviceVariableCallback mFrontUpdateCallback = new OcfDeviceVariableCallback() {
+        @Override
+        public void update(final String json) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject value = null;
+                    try {
+                        value = new JSONObject(json);
+                        mFrontSeekBar.setProgress(value.getInt("dimmingSetting"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+    OcfDeviceVariableCallback mBackUpdateCallback = new OcfDeviceVariableCallback() {
+        @Override
+        public void update(final String json) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject value = null;
+                    try {
+                        value = new JSONObject(json);
+                        mBackSeekBar.setProgress(value.getInt("dimmingSetting"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+    OcfDeviceVariableCallback mTableUpdateCallback = new OcfDeviceVariableCallback() {
+        @Override
+        public void update(final String json) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject value = null;
+                    try {
+                        value = new JSONObject(json);
+                        mTableSeekBar.setProgress(value.getInt("dimmingSetting"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
 
     OcfControlPoint.OcfOnDeviceFound onFound = new OcfControlPoint.OcfOnDeviceFound() {
         @Override
@@ -176,6 +232,9 @@ public class LivingRoomFragment extends Fragment{
                 Log.d("", "device Found");
                 mDevice = dev;
 
+                mDevice.observe(RESOURCE_FRONT, mFrontUpdateCallback);
+                mDevice.observe(RESOURCE_BACK, mBackUpdateCallback);
+                mDevice.observe(RESOURCE_TABLE, mTableUpdateCallback);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -240,6 +299,14 @@ public class LivingRoomFragment extends Fragment{
         });
         
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        mDevice.unobserve(RESOURCE_FRONT, mFrontUpdateCallback);
+        mDevice.unobserve(RESOURCE_BACK, mBackUpdateCallback);
+        mDevice.unobserve(RESOURCE_TABLE, mTableUpdateCallback);
     }
 
 }
