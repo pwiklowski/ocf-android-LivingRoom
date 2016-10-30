@@ -110,7 +110,10 @@
             android:layout_height="0dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:paddingEnd="40dp"
+            android:paddingStart="40dp"
+            />
 
         <TextView
             android:id="@+id/output_front_label"
@@ -132,7 +135,9 @@
             android:layout_height="0dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"/>
 
         <TextView
             android:id="@+id/output_back_label"
@@ -154,7 +159,10 @@
             android:layout_height="0dp"
             android:paddingRight="20dp"
             android:paddingLeft="20dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:paddingEnd="40dp"
+            android:paddingStart="40dp"
+            />
 
         <TextView
             android:id="@+id/output_table_label"
@@ -176,7 +184,9 @@
             android:layout_height="0dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:layout_weight="2"/>
+            android:layout_weight="2"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"/>
     </LinearLayout>
 
 
