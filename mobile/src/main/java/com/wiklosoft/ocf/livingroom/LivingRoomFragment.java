@@ -34,6 +34,7 @@ public class LivingRoomFragment extends Fragment{
     private static final String RESOURCE_BACK = "/lampa/back";
     private static final String RESOURCE_TABLE = "/lampa/table";
     private static final String RESOURCE_AMBIENT = "/lampa/ambient";
+    private static final String RESOURCE_AMBIENT_POWER = "/lampa/ambientPower";
 
     TextView mConnectionStatus = null;
     TextView mServerConnectionStatus = null;
@@ -127,13 +128,9 @@ public class LivingRoomFragment extends Fragment{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (mDevice != null && fromUser) {
-                    int red = Color.red(mPicker.getColor()) * progress / 100;
-                    int green = Color.green(mPicker.getColor()) * progress / 100;
-                    int blue = Color.blue(mPicker.getColor()) * progress / 100;
+                    String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
-                    String v = "{\"dimmingSetting\": \"" + red + "," + green + "," + blue + "\"}";
-
-                    mDevice.post(RESOURCE_AMBIENT, v, new OcfDeviceVariableCallback() {
+                    mDevice.post(RESOURCE_AMBIENT_POWER, v, new OcfDeviceVariableCallback() {
                         @Override
                         public void update(String json) {
                             Log.d("VariableListAdapter", "value set");
@@ -157,10 +154,9 @@ public class LivingRoomFragment extends Fragment{
             @Override
             public void onColorChanged(int i, boolean fromUser) {
                 if (mDevice != null && fromUser) {
-                    int progress = mAmbient.getProgress();
-                    int red = Color.red(mPicker.getColor()) * progress / 100;
-                    int green = Color.green(mPicker.getColor()) * progress / 100;
-                    int blue = Color.blue(mPicker.getColor()) * progress / 100;
+                    int red = Color.red(mPicker.getColor());
+                    int green = Color.green(mPicker.getColor());
+                    int blue = Color.blue(mPicker.getColor());
 
                     String v = "{\"dimmingSetting\": \"" + red + "," + green + "," + blue + "\"}";
 
@@ -225,6 +221,23 @@ public class LivingRoomFragment extends Fragment{
             });
         }
     };
+    OcfDeviceVariableCallback mAmbientPowerUpdateCallback = new OcfDeviceVariableCallback() {
+        @Override
+        public void update(final String json) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject value = null;
+                    try {
+                        value = new JSONObject(json);
+                        mAmbient.setProgress(value.getInt("dimmingSetting"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
     OcfDeviceVariableCallback mAmbientUpdateCallback = new OcfDeviceVariableCallback() {
         @Override
         public void update(final String json) {
@@ -236,9 +249,11 @@ public class LivingRoomFragment extends Fragment{
                         value = new JSONObject(json);
                         String[] colors = value.getString("dimmingSetting").split(",");
                         if (colors.length == 3) {
-                            mPicker.setColor(Color.rgb(Integer.valueOf(colors[0]),
-                                    Integer.valueOf(colors[1]),
-                                    Integer.valueOf(colors[2])));
+                            int red = Integer.valueOf(colors[0]);
+                            int green = Integer.valueOf(colors[1]);
+                            int blue = Integer.valueOf(colors[2]);
+
+                            mPicker.setColor(Color.rgb(red, green, blue));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -259,6 +274,7 @@ public class LivingRoomFragment extends Fragment{
                 mDevice.observe(RESOURCE_BACK, mBackUpdateCallback);
                 mDevice.observe(RESOURCE_TABLE, mTableUpdateCallback);
                 mDevice.observe(RESOURCE_AMBIENT, mAmbientUpdateCallback);
+                mDevice.observe(RESOURCE_AMBIENT_POWER, mAmbientUpdateCallback);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -301,6 +317,7 @@ public class LivingRoomFragment extends Fragment{
 
 
         mAmbient = (SeekBar) rootView.findViewById(R.id.output_color);
+        mAmbient.setProgress(100);
 
         mPicker = (ColorPicker) rootView.findViewById(R.id.picker);
 
@@ -333,6 +350,7 @@ public class LivingRoomFragment extends Fragment{
         mDevice.unobserve(RESOURCE_BACK, mBackUpdateCallback);
         mDevice.unobserve(RESOURCE_TABLE, mTableUpdateCallback);
         mDevice.unobserve(RESOURCE_AMBIENT, mAmbientUpdateCallback);
+        mDevice.unobserve(RESOURCE_AMBIENT_POWER, mAmbientPowerUpdateCallback);
     }
 
 }
