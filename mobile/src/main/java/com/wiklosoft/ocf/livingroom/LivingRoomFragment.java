@@ -155,8 +155,8 @@ public class LivingRoomFragment extends Fragment{
 
         mPicker.setOnColorChangedListener(new ColorPicker.OnColorChangedListener() {
             @Override
-            public void onColorChanged(int i) {
-                if (mDevice != null) {
+            public void onColorChanged(int i, boolean fromUser) {
+                if (mDevice != null && fromUser) {
                     int progress = mAmbient.getProgress();
                     int red = Color.red(mPicker.getColor()) * progress / 100;
                     int green = Color.green(mPicker.getColor()) * progress / 100;
