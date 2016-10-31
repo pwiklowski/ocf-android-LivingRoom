@@ -72,7 +72,6 @@
             <ImageButton
                 android:layout_width="100dp"
                 android:layout_height="66dp"
-                app:srcCompat="@drawable/quantum_ic_refresh_white_24"
                 android:id="@+id/searchForDevices"
                 android:layout_weight="0.15"
                 android:background="@android:color/transparent"
