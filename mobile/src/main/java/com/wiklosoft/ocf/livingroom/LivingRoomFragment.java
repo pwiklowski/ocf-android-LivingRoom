@@ -61,7 +61,7 @@ public class LivingRoomFragment extends Fragment{
             
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null){
+                if (mDevice != null && fromUser){
                     String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
                     mDevice.post(RESOURCE_FRONT, v, new OcfDeviceVariableCallback() {
@@ -85,7 +85,7 @@ public class LivingRoomFragment extends Fragment{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null){
+                if (mDevice != null && fromUser){
                     String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
                     mDevice.post(RESOURCE_BACK, v, new OcfDeviceVariableCallback() {
@@ -109,7 +109,7 @@ public class LivingRoomFragment extends Fragment{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null){
+                if (mDevice != null && fromUser){
                     String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
                     mDevice.post(RESOURCE_TABLE, v, new OcfDeviceVariableCallback() {
@@ -126,7 +126,7 @@ public class LivingRoomFragment extends Fragment{
         mAmbient.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null) {
+                if (mDevice != null && fromUser) {
                     int red = Color.red(mPicker.getColor()) * progress / 100;
                     int green = Color.green(mPicker.getColor()) * progress / 100;
                     int blue = Color.blue(mPicker.getColor()) * progress / 100;
