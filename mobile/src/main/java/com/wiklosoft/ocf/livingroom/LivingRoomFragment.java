@@ -224,6 +224,29 @@ public class LivingRoomFragment extends Fragment{
                 }
             });
         }
+    };
+    OcfDeviceVariableCallback mAmbientUpdateCallback = new OcfDeviceVariableCallback() {
+        @Override
+        public void update(final String json) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject value = null;
+                    try {
+                        value = new JSONObject(json);
+                        String[] colors = value.getString("dimmingSetting").split(",");
+                        if (colors.length == 3) {
+                            mPicker.setColor(Color.rgb(Integer.valueOf(colors[0]),
+                                    Integer.valueOf(colors[1]),
+                                    Integer.valueOf(colors[2])));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
 
     OcfControlPoint.OcfOnDeviceFound onFound = new OcfControlPoint.OcfOnDeviceFound() {
         @Override
@@ -235,6 +258,8 @@ public class LivingRoomFragment extends Fragment{
                 mDevice.observe(RESOURCE_FRONT, mFrontUpdateCallback);
                 mDevice.observe(RESOURCE_BACK, mBackUpdateCallback);
                 mDevice.observe(RESOURCE_TABLE, mTableUpdateCallback);
+                mDevice.observe(RESOURCE_AMBIENT, mAmbientUpdateCallback);
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -307,6 +332,7 @@ public class LivingRoomFragment extends Fragment{
         mDevice.unobserve(RESOURCE_FRONT, mFrontUpdateCallback);
         mDevice.unobserve(RESOURCE_BACK, mBackUpdateCallback);
         mDevice.unobserve(RESOURCE_TABLE, mTableUpdateCallback);
+        mDevice.unobserve(RESOURCE_AMBIENT, mAmbientUpdateCallback);
     }
 
 }
