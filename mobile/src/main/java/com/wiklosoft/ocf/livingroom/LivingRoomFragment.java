@@ -2,12 +2,14 @@ package com.wiklosoft.ocf.livingroom;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
@@ -339,6 +341,7 @@ public class LivingRoomFragment extends Fragment{
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             }
         });
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
         return rootView;
     }
