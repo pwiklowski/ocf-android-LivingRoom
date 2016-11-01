@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
@@ -9,32 +9,26 @@
               android:id="@+id/layout"
     >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/device_connected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="Not connected"
-            android:fontFamily="sans-serif-condensed"
-            android:textColor="@color/colorAccent"
-            android:textSize="20sp"/>
-    </LinearLayout>
-
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/power_off"
+        android:id="@+id/turnOnButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:visibility="visible"
+        android:elevation="3dp"
+        android:background="@android:color/background_dark"/>
 
     <RelativeLayout
         android:id="@+id/knob"
         android:layout_width="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-
+        android:layout_above="@+id/list"
         android:layout_weight="15"
-        android:layout_height="0dp">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -79,6 +73,22 @@
                 android:layout_alignParentStart="true"
                 />
 
+            <TextView
+                android:id="@+id/device_connected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Not connected"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp"
+                android:layout_marginEnd="21dp"
+                android:layout_marginTop="21dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"/>
+
         </RelativeLayout>
 
     </RelativeLayout>
@@ -86,8 +96,11 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="15">
+        android:layout_height="wrap_content"
+        android:layout_weight="15"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/list">
 
         <TextView
             android:id="@+id/color_label"
@@ -189,4 +202,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -21,25 +21,23 @@ import android.widget.ToggleButton;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.wiklosoft.ocf.OcfControlPoint;
 import com.wiklosoft.ocf.OcfDevice;
-import com.wiklosoft.ocf.OcfDeviceVariable;
 import com.wiklosoft.ocf.OcfDeviceVariableCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 
 public class LivingRoomFragment extends Fragment{
     private static final String LIVINGROOM_ID = "00000000-0000-0000-0001-000000000001";
+    private String TAG = "LivingRoomFragment";
     private static final String RESOURCE_FRONT = "/lampa/front";
     private static final String RESOURCE_BACK = "/lampa/back";
     private static final String RESOURCE_TABLE = "/lampa/table";
     private static final String RESOURCE_AMBIENT = "/lampa/ambient";
     private static final String RESOURCE_AMBIENT_POWER = "/lampa/ambientPower";
+    private static final String RESOURCE_MASTER = "/master";
 
     TextView mConnectionStatus = null;
-    TextView mServerConnectionStatus = null;
     OcfDevice mDevice = null;
     OcfControlPoint mController = null;
 
@@ -50,21 +48,23 @@ public class LivingRoomFragment extends Fragment{
     SeekBar mAmbient = null;
 
     ImageButton mSearchForDevices = null;
+    ImageButton mTurnOnButton = null;
 
     ColorPicker mPicker = null;
 
-    void setScrollListeners()
-    {
+    void setScrollListeners() {
         mFrontSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-            
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null && fromUser){
+                if (mDevice != null && fromUser) {
                     String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
                     mDevice.post(RESOURCE_FRONT, v, new OcfDeviceVariableCallback() {
@@ -88,7 +88,7 @@ public class LivingRoomFragment extends Fragment{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null && fromUser){
+                if (mDevice != null && fromUser) {
                     String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
                     mDevice.post(RESOURCE_BACK, v, new OcfDeviceVariableCallback() {
@@ -112,7 +112,7 @@ public class LivingRoomFragment extends Fragment{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (mDevice != null && fromUser){
+                if (mDevice != null && fromUser) {
                     String v = "{\"dimmingSetting\": " + Integer.toString(progress) + "}";
 
                     mDevice.post(RESOURCE_TABLE, v, new OcfDeviceVariableCallback() {
@@ -172,6 +172,31 @@ public class LivingRoomFragment extends Fragment{
             }
         });
     }
+    OcfDeviceVariableCallback mMasterUpdateCallback = new OcfDeviceVariableCallback() {
+        @Override
+        public void update(final String json) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject value = null;
+                    try {
+                        value = new JSONObject(json);
+
+                        if (value.getBoolean("value")){
+                            turnOn();
+                        }else{
+                            turnOff();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+
     OcfDeviceVariableCallback mFrontUpdateCallback = new OcfDeviceVariableCallback() {
         @Override
         public void update(final String json) {
@@ -277,6 +302,8 @@ public class LivingRoomFragment extends Fragment{
                 mDevice.observe(RESOURCE_TABLE, mTableUpdateCallback);
                 mDevice.observe(RESOURCE_AMBIENT, mAmbientUpdateCallback);
                 mDevice.observe(RESOURCE_AMBIENT_POWER, mAmbientUpdateCallback);
+                mDevice.observe(RESOURCE_MASTER, mMasterUpdateCallback);
+
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -335,25 +362,76 @@ public class LivingRoomFragment extends Fragment{
         });
 
         setScrollListeners();
-        
+
         mMasterButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (mDevice != null) {
+                    String v = "{\"value\": false}";
+
+                    mDevice.post(RESOURCE_MASTER, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d(TAG, "value set");
+                        }
+                    });
+                    turnOff();
+                }
             }
         });
+
+        mTurnOnButton = (ImageButton) rootView.findViewById(R.id.turnOnButton);
+        mTurnOnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mDevice != null) {
+                    String v = "{\"value\": true}";
+
+                    mDevice.post(RESOURCE_MASTER, v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d(TAG, "value set");
+                        }
+                    });
+                    turnOn();
+                }
+            }
+        });
+
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
         return rootView;
     }
 
+    void turnOn(){
+        Log.d(TAG, "turnOn");
+        WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
+        params.screenBrightness = 50;
+        getActivity().getWindow().setAttributes(params);
+
+        mTurnOnButton.setVisibility(View.GONE);
+    }
+    void turnOff(){
+        Log.d(TAG, "turnOff");
+        WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
+        params.screenBrightness = 0;
+        getActivity().getWindow().setAttributes(params);
+
+        mTurnOnButton.setVisibility(View.VISIBLE);
+    }
+
+
     @Override
     public void onDestroyView(){
         super.onDestroyView();
+
         mDevice.unobserve(RESOURCE_FRONT, mFrontUpdateCallback);
         mDevice.unobserve(RESOURCE_BACK, mBackUpdateCallback);
         mDevice.unobserve(RESOURCE_TABLE, mTableUpdateCallback);
         mDevice.unobserve(RESOURCE_AMBIENT, mAmbientUpdateCallback);
         mDevice.unobserve(RESOURCE_AMBIENT_POWER, mAmbientPowerUpdateCallback);
+        mDevice.unobserve(RESOURCE_MASTER, mMasterUpdateCallback);
     }
 
 }
